@@ -15,7 +15,7 @@ load_dotenv()
 openai_api_key = os.environ.get("OPENAI_API_KEY")
 
 # location of the pdf file/files. 
-reader = PdfReader('docs/RestrictAct.pdf')
+reader = PdfReader('docs/krish.pdf')
 
 reader
 

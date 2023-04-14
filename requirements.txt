@@ -4,3 +4,7 @@ PyPDF2
 faiss-cpu
 python-dotenv
 tiktoken
+fastapi
+uvicorn
+python-multipart
+typing
