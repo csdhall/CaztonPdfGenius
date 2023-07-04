@@ -1,0 +1,20 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "FastAPI",
+            "type": "python",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "cazton_pdf_ai_azure:app",
+                "--host",
+                "localhost",
+                "--port",
+                "8080",
+                "--reload"
+            ],
+            "console": "integratedTerminal"
+        }
+    ]
+}
