@@ -69,8 +69,7 @@ from langchain.llms import OpenAI
 
 gpt3_model = "CaztonDavinci3"
 
-chain = load_qa_chain(OpenAI(engine=gpt3_model), chain_type="stuff")
-
+chain = load_qa_chain(OpenAI(engine=gpt3_model, temperature=0.3, max_tokens=3000), chain_type="stuff", filter_docs=True)
 query = "who are the authors of the article?"
 docs = docsearch.similarity_search(query)
 chain.run(input_documents=docs, question=query)

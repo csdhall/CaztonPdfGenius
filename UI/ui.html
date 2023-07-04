@@ -6,7 +6,7 @@
     <style>
       body {
         font-family: Arial, sans-serif;
-        font-size: 24px;
+        font-size: 16px;
         margin: 0;
         padding: 0;
         display: flex;
@@ -15,6 +15,13 @@
         justify-content: center;
         align-items: center;
         background-color: #f5f5f5;
+      }
+
+      p:nth-child(even) {
+        color: #007aff;
+      }
+      p:nth-child(odd) {
+        color: #444444;
       }
 
       .chat-container {
@@ -43,7 +50,7 @@
       }
 
       .message.bot {
-        color: #333;
+        color: #007bff;
       }
 
       .message.user {
@@ -114,7 +121,6 @@
           id="inputBox"
           class="input"
           placeholder="Ask a question..."
-          value="what is the key takeaway"
         />
         <button type="submit">Ask</button>
       </form>
@@ -156,6 +162,8 @@
         const messageElement = document.createElement("p");
         messageElement.innerText = `${sender}: ${message}`;
         chatbox.appendChild(messageElement);
+        messageElement.scrollIntoView();
+
       }
     </script>
   </body>

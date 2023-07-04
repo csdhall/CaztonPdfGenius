@@ -8,6 +8,7 @@ import os
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+import pickle
 
 app = FastAPI()
 app.add_middleware(
@@ -43,7 +44,8 @@ def get_pdf_text(pdf_docs):
             text += page.extract_text()
     return text
 
-raw_text=get_pdf_text(['docs/RestrictAct.pdf', 'docs/Gandhi.pdf'])
+# raw_text=get_pdf_text(['docs/RestrictAct.pdf', 'docs/Gandhi.pdf'])
+raw_text=get_pdf_text(['docs/Orca.pdf'])
 
 # We need to split the text that we read into smaller chunks so that during information retreival we don't hit the token size limits. 
 text_splitter = CharacterTextSplitter(        
@@ -65,6 +67,13 @@ embeddings = OpenAIEmbeddings(
 
 docsearch = FAISS.from_texts(texts, embeddings)
 
+@app.get("/runFirst")
+async def runFirst():
+    docsearch = FAISS.from_texts(texts, embeddings)
+
+    with open("docsearch.pkl", "wb") as f:
+        pickle.dump(docsearch, f)
+
 from langchain.chains.question_answering import load_qa_chain
 from langchain.llms import OpenAI
 
@@ -80,7 +89,10 @@ async def root():
 async def get_answer(item: Item):
     query = item.key
     # Perform similarity search using the query
-    docs = docsearch.similarity_search(query)
+   
+    with open("docsearch.pkl", "rb") as f:
+        docsearch = pickle.load(f)
+        docs = docsearch.similarity_search(query)
     
     # Run the question-answering chain
     response = chain.run(input_documents=docs, question=(query))

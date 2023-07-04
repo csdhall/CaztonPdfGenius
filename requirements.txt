@@ -9,3 +9,4 @@ uvicorn
 python-multipart
 typing
 tiktoken
+pickle5
