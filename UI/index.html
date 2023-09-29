@@ -132,6 +132,7 @@
 
       function askQuestion() {
         const question = inputBox.value;
+        console.log("You: " + question);
 
         if (question) {
           inputBox.value = "";
@@ -145,7 +146,10 @@
               key: question,
             }),
           })
-            .then((response) => response.json())
+            .then((response) => {
+              console.log(response);
+              return response.json(); // Add the 'return' keyword here
+            })
             .then((data) => {
               const answer = data.response;
               appendMessage("Chatbot", answer);
@@ -158,12 +162,44 @@
         return false;
       }
 
+      // function askQuestion() {
+      //   const question = inputBox.value;
+      //   console.log("You: " + question)
+
+      //   if (question) {
+      //     inputBox.value = "";
+      //     appendMessage("You", question);
+      //     fetch("http://localhost:8080/qa", {
+      //       method: "POST",
+      //       headers: {
+      //         "Content-Type": "application/json",
+      //       },
+      //       body: JSON.stringify({
+      //         key: question,
+      //       }),
+      //     })
+      //       .then((response) => {
+      //         console.log(response)
+      //         console.log(response.json())
+      //         response.json()
+      //       })
+      //       .then((data) => {
+      //         const answer = data.response;
+      //         appendMessage("Chatbot", answer);
+      //       })
+      //       .catch((error) => {
+      //         console.error("Error:", error);
+      //       });
+      //   }
+
+      //   return false;
+      // }
+
       function appendMessage(sender, message) {
         const messageElement = document.createElement("p");
         messageElement.innerText = `${sender}: ${message}`;
         chatbox.appendChild(messageElement);
         messageElement.scrollIntoView();
-
       }
     </script>
   </body>

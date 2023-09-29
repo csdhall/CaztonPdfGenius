@@ -24,13 +24,18 @@ async def test():
     return {"message": "Hello, World!"}
 
 # Load environment variables from the .env file
-load_dotenv()
+load_dotenv(".env", override=True)
 
 # Access the OPENAI_API_KEY environment variable
 openai_api_key = os.environ.get("OPENAI_API_KEY")
 openai_api_type = os.environ.get("OPENAI_API_TYPE")
 openai_api_base = os.environ.get("OPENAI_API_BASE")
 openai_api_version = os.environ.get("OPENAI_API_VERSION")
+
+# print(openai_api_key)
+# print(openai_api_type)
+# print(openai_api_base)
+# print(openai_api_version)
 
 class Item(BaseModel):
     key: str
@@ -99,3 +104,6 @@ async def get_answer(item: Item):
     
     # Return the response
     return {"response": response}
+
+
+

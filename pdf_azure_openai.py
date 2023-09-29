@@ -9,7 +9,7 @@ import os
 from dotenv import load_dotenv
 
 # Load environment variables from the .env file
-load_dotenv()
+load_dotenv(".env", override=True)
 
 # Access the OPENAI_API_KEY environment variable
 openai_api_key = os.environ.get("OPENAI_API_KEY")
@@ -17,8 +17,13 @@ openai_api_type = os.environ.get("OPENAI_API_TYPE")
 openai_api_base = os.environ.get("OPENAI_API_BASE")
 openai_api_version = os.environ.get("OPENAI_API_VERSION")
 
+# print(openai_api_key)
+# print(openai_api_type)
+# print(openai_api_base)
+# print(openai_api_version)
+
 # location of the pdf file/files. 
-reader = PdfReader('docs/RestrictAct.pdf')
+reader = PdfReader('docs/Orca.pdf')
 
 reader
 
@@ -69,7 +74,7 @@ from langchain.llms import OpenAI
 
 gpt3_model = "CaztonDavinci3"
 
-chain = load_qa_chain(OpenAI(engine=gpt3_model, temperature=0.3, max_tokens=3000), chain_type="stuff", filter_docs=True)
+chain = load_qa_chain(OpenAI(engine=gpt3_model, temperature=0.3, max_tokens=3000), chain_type="stuff")
 query = "who are the authors of the article?"
 docs = docsearch.similarity_search(query)
 chain.run(input_documents=docs, question=query)

@@ -10,3 +10,5 @@ python-multipart
 typing
 tiktoken
 pickle5
+flask
+flask-cors
