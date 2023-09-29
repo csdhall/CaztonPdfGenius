@@ -68,13 +68,13 @@ embeddings = OpenAIEmbeddings(deployment=embeddings_model,
 import pickle  
   
 # Assuming you have your embeddings in a variable called 'embeddings'  
-with open('orca.pkl', 'wb') as f:  
-    pickle.dump(embeddings, f)  
+# with open('orca.pkl', 'wb') as f:  
+#     pickle.dump(embeddings, f)  
 
 # import pickle  
   
-# with open('embeddings.pkl', 'rb') as f:  
-#     embeddings = pickle.load(f)  
+with open('orca.pkl', 'rb') as f:  
+    embeddings = pickle.load(f)  
 
 docsearch = FAISS.from_texts(texts, embeddings)
 
@@ -86,9 +86,9 @@ from langchain.llms import OpenAI
 gpt3_model = "CaztonDavinci3"
 
 chain = load_qa_chain(OpenAI(engine=gpt3_model, temperature=0.3, max_tokens=3000), chain_type="stuff")
-query = "who are the authors of the article?"
-docs = docsearch.similarity_search(query)
-chain.run(input_documents=docs, question=query)
+# query = "who are the authors of the article?"
+# docs = docsearch.similarity_search(query)
+# chain.run(input_documents=docs, question=query)
 
 # Start an infinite loop to continuously ask questions
 while True:
