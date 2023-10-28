@@ -12,3 +12,4 @@ tiktoken
 pickle5
 flask
 flask-cors
+youtube_transcript_api

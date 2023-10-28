@@ -18,13 +18,13 @@ openai_api_type = os.environ.get("OPENAI_API_TYPE")
 openai_api_base = os.environ.get("OPENAI_API_BASE")
 openai_api_version = os.environ.get("OPENAI_API_VERSION")
 
-# print(openai_api_key)
-# print(openai_api_type)
-# print(openai_api_base)
-# print(openai_api_version)
+print(openai_api_key)
+print(openai_api_type)
+print(openai_api_base)
+print(openai_api_version)
 
 # location of the pdf file/files. 
-reader = PdfReader('docs/Orca.pdf')
+reader = PdfReader('docs/LlmLongContextPaper.pdf')
 
 reader
 

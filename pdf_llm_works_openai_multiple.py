@@ -10,7 +10,7 @@ import os
 from dotenv import load_dotenv
 
 # Load environment variables from the .env file
-load_dotenv()
+load_dotenv(".env", override=True)
 
 # Access the OPENAI_API_KEY environment variable
 openai_api_key = os.environ.get("OPENAI_API_KEY")
@@ -19,7 +19,7 @@ openai_api_base = os.environ.get("OPENAI_API_BASE")
 openai_api_version = os.environ.get("OPENAI_API_VERSION")
 
 
-
+print(openai_api_key)
 # %%
 # location of the pdf file/files. 
 

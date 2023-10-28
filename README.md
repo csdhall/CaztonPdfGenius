@@ -7,6 +7,14 @@ Run this on termincal. This will run HTML with NO CORS. DO NOT use in production
 ```python UI/run_html.py```
 
 Then run this
+## Server.py has BOTH youtube and PDF working. 
+
+``` cd Server ```
+``` python server.py ```
+
+or
+``` python pdf_azure_openai_embeddings.py ```
+or 
 ``` python pdf_azure_openai_fast_api.py ```
 
 Make sure CORS is ON on Edge. 
