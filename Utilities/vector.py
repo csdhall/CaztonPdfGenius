@@ -15,18 +15,6 @@ def read_embeddings(file_name):
         print(f"\n\n Reading.........{file_path} \n\n\n")
         embeddings = pickle.load(f)  
 
-def create_embeddings_if_not_exists(file_path_pkl, embeddings):
-    print(f"\n\n file_path_pkl: {file_path_pkl} \n\n ")
-
-    if os.path.exists(file_path_pkl):  
-        # Read the transcript from the existing file  
-        with open(file_path_pkl, "rb") as file:  
-            embeddings = pickle.load(file)
-    else:
-        with open(file_path_pkl, 'wb') as f:  
-            pickle.dump(embeddings, f)  
-    
-    return embeddings
 
 def get_file_path(file_name):
     return f'Data/{file_name}.pkl'
