@@ -31,7 +31,7 @@ openai_api_version = os.environ.get("OPENAI_API_VERSION")
 
 
 # location of the pdf file/files. 
-file_name= 'LlmLongContextPaper'
+file_name= 'BloombergGPTPaper'
 file_path = f'Docs/{file_name}.pdf'
 
 reader = PdfReader(file_path)
@@ -62,6 +62,22 @@ texts = text_splitter.split_text(raw_text)
 
 len(texts)
 print(f"len(texts): {len(texts)}")
+
+texts = [item.replace("<|endoftext|>", "endoftext") for item in texts]
+print(f"len(texts): {len(texts)}")
+
+# for i, text in enumerate(texts):
+#     result = "<|endoftext|>" in text
+#     if result == True:
+#         print(f"i: {result} <|endoftext|>")
+#         print(f"********")
+
+# for i, text in enumerate(texts):
+#     result = "endoftext" in text
+#     if result == True:
+#         print(f"i: {result} endoftext")
+#         print(f"********")
+
 # texts[0]
 # print(f"texts[0]: {texts[0]}")
 # texts[1]

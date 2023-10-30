@@ -25,7 +25,7 @@ openai_api_version = os.environ.get("OPENAI_API_VERSION")
 # print(openai_api_version)
 
 # location of the pdf file/files. 
-file_name= 'LlmLongContextPaper'
+file_name= 'GPT-FATHOM'
 file_path = f'docs/{file_name}.pdf'
 
 reader = PdfReader(file_path)
@@ -42,12 +42,13 @@ for i, page in enumerate(reader.pages):
 # raw_text
 
 raw_text[:100]
+raw_text.replace("<|endoftext|>", "endoftext")
 
 # We need to split the text that we read into smaller chunks so that during information retreival we don't hit the token size limits. 
 
 text_splitter = CharacterTextSplitter(        
     separator = "\n",
-    chunk_size = 1000,
+    chunk_size = 30000,
     chunk_overlap  = 200,
     length_function = len,
 )
@@ -58,6 +59,8 @@ len(texts)
 texts[0]
 
 texts[1]
+
+texts = [item.replace("<|endoftext|>", "endoftext") for item in texts]
 
 # Download embeddings from OpenAI
 embeddings_model = "CaztonEmbedAda2"
@@ -73,12 +76,13 @@ embeddings = OpenAIEmbeddings(deployment=embeddings_model,
 import pickle  
   
 # NOTE: DO THIS FIRST. Uncomment and run.  
-# with open(f'{file_name}.pkl', 'wb') as f:  
+# with open(f'Data/{file_name}.pkl', 'wb') as f:  
 #     pickle.dump(embeddings, f)  
 
+# exit()
 # import pickle  
 
-file = f'{file_name}.pkl'
+file = f'Data/{file_name}.pkl'
 with open(file, 'rb') as f:  
     print(f"Reading.........{file}")
     embeddings = pickle.load(f)  
