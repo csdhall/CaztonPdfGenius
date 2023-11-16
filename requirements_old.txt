@@ -1,0 +1,15 @@
+openai
+langchain
+PyPDF2
+faiss-cpu
+python-dotenv
+tiktoken
+fastapi
+uvicorn
+python-multipart
+typing
+tiktoken
+pickle5
+flask
+flask-cors
+youtube_transcript_api
