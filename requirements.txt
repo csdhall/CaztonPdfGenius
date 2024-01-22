@@ -121,3 +121,5 @@ Werkzeug
 yarl  
 youtube-transcript-api  
 zipp  
+pyperclip
+pypdf3
