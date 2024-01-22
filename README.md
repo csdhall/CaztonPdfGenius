@@ -4,7 +4,7 @@ Here's a markdown version of the steps to run the FastAPI application:
 
 ## NOTE: Use this if you're already set up
 Run this on termincal. This will run HTML with NO CORS. DO NOT use in production
-```python UI/run_html.py```
+``` cd UI/run_html.py```
 
 Then run this
 ## Server.py has BOTH youtube and PDF working. 

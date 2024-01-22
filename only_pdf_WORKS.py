@@ -25,8 +25,8 @@ openai_api_version = os.environ.get("OPENAI_API_VERSION")
 # print(openai_api_version)
 
 # location of the pdf file/files. 
-file_name= 'GPT-FATHOM'
-file_path = f'docs/{file_name}.pdf'
+file_name= 'PowerInfer'
+file_path = f'Docs/{file_name}.pdf'
 
 reader = PdfReader(file_path)
 
@@ -34,7 +34,9 @@ reader
 
 # read data from the file and put them into a variable called raw_text
 raw_text = ''
-for i, page in enumerate(reader.pages):
+#NOTE: ONLY first 22 pages are read.
+#NOTE: Change the number of pages to read.
+for i, page in enumerate(reader.pages[:22]):
     text = page.extract_text()
     if text:
         raw_text += text
@@ -75,12 +77,15 @@ embeddings = OpenAIEmbeddings(deployment=embeddings_model,
 
 import pickle  
   
-# NOTE: DO THIS FIRST. Uncomment and run.  
+# NOTE: DO THIS FIRST. Uncomment and run. 
+# NOTE: ONLY first 22 pages are read.
+# NOTE: Change the number of pages to read. 
 # with open(f'Data/{file_name}.pkl', 'wb') as f:  
 #     pickle.dump(embeddings, f)  
 
 # exit()
-# import pickle  
+
+import pickle  
 
 file = f'Data/{file_name}.pkl'
 with open(file, 'rb') as f:  
@@ -146,6 +151,7 @@ app.add_middleware(
     allow_methods=["*"],  
     allow_headers=["*"],  
 )  
+
   
 # ... (your existing code)  
 
@@ -177,3 +183,4 @@ if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8080)  
 
 
+# Create a blog post of 1500-2000 words explaining all major highlights and learnings from this text. Also, add a good intro and conclusion.
