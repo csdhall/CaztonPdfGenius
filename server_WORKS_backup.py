@@ -6,7 +6,7 @@ from langchain.chat_models import ChatOpenAI
 import pickle
 from Utilities.video import get_youtube_transcript, parse_youtube_link
 from Utilities.vector import *
-
+import CONSTANTS
 import tiktoken
 # Get your API keys from openai, you will need to create an account. 
 # Here is the link to get the keys: https://platform.openai.com/account/billing/overview
@@ -31,7 +31,8 @@ openai_api_version = os.environ.get("OPENAI_API_VERSION")
 
 
 # location of the pdf file/files. 
-file_name= 'BloombergGPTPaper'
+file_name=CONSTANTS.FILE
+
 file_path = f'Docs/{file_name}.pdf'
 
 reader = PdfReader(file_path)
@@ -83,7 +84,7 @@ print(f"len(texts): {len(texts)}")
 # texts[1]
 
 # Download embeddings from OpenAI
-embeddings_model = "CaztonEmbedAda2"
+embeddings_model = "Cazton-ada-2"
 tokenizer = tiktoken.get_encoding("cl100k_base")
 
 # NOTE: DO THIS FIRST. Uncomment and run.
@@ -104,12 +105,12 @@ embeddings = create_embeddings_if_not_exists(file_path_pkl, embeddings)
 
 # print("/n/n/ Embeddings saved to pickle file /n/n/n")
 # exit()
-# import pickle  
+import pickle  
 
-# file = f'Data/{file_name}.pkl'
-# with open(file, 'rb') as f:  
-#     print(f"\n Reading.........{file}")
-#     embeddings = pickle.load(f)  
+file = f'Data/{file_name}.pkl'
+with open(file, 'rb') as f:  
+    print(f"\n Reading.........{file}")
+    embeddings = pickle.load(f)  
 
 docsearch = FAISS.from_texts(texts, embeddings)
 
@@ -121,7 +122,7 @@ from langchain.chains.question_answering import load_qa_chain
 from langchain.llms import OpenAI
 
 # gpt3_model = "CaztonDavinci3"
-gpt4_model = "CaztonGpt-4"
+gpt4_model = "CaztonGpt-4Turbo"
 
 chain = load_qa_chain(ChatOpenAI(engine=gpt4_model, temperature=0.3, max_tokens=3000), chain_type="stuff")
 # query = "who are the authors of the article?"
