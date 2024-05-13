@@ -11,7 +11,7 @@ Then run this
 ## Server.py has BOTH youtube and PDF working. 
 
 ``` cd Server ```
-``` python server_WORKS2.py ```
+``` python app.py ```
 
 or
 ``` python pdf_azure_openai_embeddings.py ```

@@ -1,3 +1,5 @@
+# app.py
+
 from PyPDF2 import PdfReader
 from langchain.embeddings.azure_openai import AzureOpenAIEmbeddings
 from langchain.text_splitter import CharacterTextSplitter
@@ -19,28 +21,9 @@ os.environ.clear()
 load_dotenv(".env", override=True)
 import os
 
-# # List of environment variables to delete
-# env_vars_to_delete = ["base_url"]
-# # env_vars_to_delete = ["base_url", "OPENAI_API_TYPE", "OPENAI_API_BASE", "OPENAI_API_VERSION"]
-
-# # Delete each environment variable
-# for var in env_vars_to_delete:
-#     if var in os.environ:
-#         del os.environ[var]
-
-# Access the OPENAI_API_KEY environment variable
-# openai_api_key = os.environ.get("OPENAI_API_KEY")
-# openai_api_type = os.environ.get("OPENAI_API_TYPE")
-# openai_api_base = os.environ.get("OPENAI_API_BASE")
-# openai_api_version = os.environ.get("OPENAI_API_VERSION")
-
-# print(f"openai_api_base: {openai_api_base}")
-# print(f"openai_api_version: {openai_api_version}")
-# print(f"openai_api_key: {openai_api_key}")
-# print(f"base_url: {os.environ.get('base_url')}")
 print("********")
-# exit()
-cazton_gpt4_model = os.getenv("CaztonGpt4_0125_Preview")
+
+cazton_gpt4_model = os.getenv("Gpt4Turbo-2023-04-09")
 openai_api_version = os.getenv("OPENAI_API_VERSION")
 chatAzureOpenAI = AzureChatOpenAI(
         azure_deployment=cazton_gpt4_model,
@@ -50,12 +33,7 @@ chatAzureOpenAI = AzureChatOpenAI(
         temperature=0,
     )
 
-# message = HumanMessage(content="tell a joke")
-# response = chatAzureOpenAI([message])
-# print(f"response: {response}")
-# exit()
 
-# location of the pdf file/files. 
 file_name=CONSTANTS.FILE
 
 file_path = f'Docs/{file_name}.pdf'
@@ -104,62 +82,9 @@ chatAzureOpenAI = AzureChatOpenAI(
         model=cazton_gpt4_model,
         temperature=0,
     )
-# chain = load_qa_chain(ChatOpenAI(engine=gpt4_model, temperature=0.3, max_tokens=3000), chain_type="stuff")
 
-# query = "who are the authors of the article?"
-# docs = docsearch.similarity_search(query)
-# chain.run(input_documents=docs, question=query)
 
-# Start an infinite loop to continuously ask questions
 
-# NOTE: Uncomment WHILE loop to test
-# while True:
-#     # Prompt the user to enter a question
-#     query = input("Enter your question (or type 'exit' to quit): ")
-    
-#     # Check if the user wants to exit the loop
-#     if query.lower() == 'exit':
-#         break
-
-#     # Perform similarity search using the query
-#     docs = docsearch.similarity_search(query)
-    
-#     # Run the question-answering chain
-#     response = chain.run(input_documents=docs, question=query)
-    
-#     # Print the response
-#     print(response)
-
-# # # Exit message
-# print("Exiting the question-answering loop.")
-
-def get_transcript(query):  
-    youtube_url = parse_youtube_link(query)  
-    if youtube_url:  
-        print("***********")
-        print(youtube_url)
-        video_id = youtube_url.split("watch?v=")[-1]  
-        file_name = f"Data/{video_id}.txt"  
-  
-        if os.path.exists(file_name):  
-            # Read the transcript from the existing file  
-            with open(file_name, "r") as file:  
-                transcript = file.read()  
-        else:  
-            # Fetch the transcript and save it to a new file  
-            transcript = get_youtube_transcript(video_id)  
-            with open(file_name, "w") as file:  
-                file.write(transcript)  
-  
-        global current_context  
-        global current_docsearch_instance  
-        current_context = "youtube"  
-        current_docsearch_instance = search_documents(transcript, embeddings)  
-        return transcript  
-    else:  
-        return None   
-
-# exit()
 from fastapi import FastAPI, HTTPException, Depends  
 from fastapi.middleware.cors import CORSMiddleware  
 import uvicorn  
@@ -214,8 +139,6 @@ async def ask_question(request: QuestionRequest):
     return {"response": response.content}  
 
  
-
-
 if __name__ == "__main__":  
     uvicorn.run(app, host="127.0.0.1", port=5500)  
 
