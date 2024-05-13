@@ -1,95 +1,22 @@
-# app.py
-
-from PyPDF2 import PdfReader
-from langchain.embeddings.azure_openai import AzureOpenAIEmbeddings
-from langchain.text_splitter import CharacterTextSplitter
-from langchain.vectorstores import ElasticVectorSearch, Pinecone, Weaviate, FAISS
-from langchain.chat_models import AzureChatOpenAI
-from langchain.schema import HumanMessage
-import pickle
-from Utilities.video import get_youtube_transcript, parse_youtube_link
-from Utilities.vector import *
-import CONSTANTS
-import tiktoken
-# Get your API keys from openai, you will need to create an account. 
-# Here is the link to get the keys: https://platform.openai.com/account/billing/overview
-import os
-from dotenv import load_dotenv
-
-os.environ.clear()
-# Load environment variables from the .env file
-load_dotenv(".env", override=True)
-import os
-
-print("********")
-
-cazton_gpt4_model = os.getenv("Gpt4Turbo-2023-04-09")
-openai_api_version = os.getenv("OPENAI_API_VERSION")
-chatAzureOpenAI = AzureChatOpenAI(
-        azure_deployment=cazton_gpt4_model,
-        openai_api_version=os.getenv("OPENAI_API_VERSION"),
-        azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
-        model=cazton_gpt4_model,
-        temperature=0,
-    )
-
-
-file_name=CONSTANTS.FILE
-
-file_path = f'Docs/{file_name}.pdf'
-
-reader = PdfReader(file_path)
-
-print(f"file_path: {file_path}")
-print(f"reader: {reader}")
-
-# read data from the file and put them into a variable called raw_text
-raw_text = ''
-for i, page in enumerate(reader.pages):
-    text = page.extract_text()
-    if text:
-        raw_text += text
-
-# raw_text
-
-raw_text[:100]
-print(f"raw_text: {raw_text[:100]}")
-
-# Remove newline characters
-clean_text = raw_text.replace("\n", " ")
-
-# Remove multiple spaces
-clean_text = ' '.join(clean_text.split())
-
-print(clean_text)
-# We need to split the text that we read into smaller chunks so that during information retreival we don't hit the token size limits. 
-
-strings_to_remove = ["<|endoftext|>", "endoftext"]
-
-for string in strings_to_remove:
-    clean_text = clean_text.replace(string, "")
-
-print(f"\n\n clean_text : {clean_text}\n\n")
-
-from langchain.chains.question_answering import load_qa_chain
-from langchain.llms import OpenAI
-
-
-chatAzureOpenAI = AzureChatOpenAI(
-        azure_deployment=cazton_gpt4_model,
-        openai_api_version=os.getenv("OPENAI_API_VERSION"),
-        azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
-        model=cazton_gpt4_model,
-        temperature=0,
-    )
-
-
-
-from fastapi import FastAPI, HTTPException, Depends  
+from fastapi import FastAPI, HTTPException, File, UploadFile  
 from fastapi.middleware.cors import CORSMiddleware  
 import uvicorn  
-
+from PyPDF2 import PdfReader  
+import os  
+from openai import AzureOpenAI  
+from dotenv import load_dotenv  
   
+# Load environment variables from the .env file  
+load_dotenv(".env", override=True)  
+  
+# Initialize AzureOpenAI client  
+client = AzureOpenAI(  
+    azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),  
+    api_key=os.getenv("AZURE_OPENAI_API_KEY"),  
+    api_version=os.getenv("OPENAI_API_VERSION"),
+    azure_deployment=os.getenv("Gpt4Turbo-2023-04-09")  
+)  
+ 
 app = FastAPI()  
   
 # Add CORS middleware  
@@ -108,38 +35,51 @@ app.add_middleware(
     allow_headers=["*"],  
 )  
   
-from pydantic import BaseModel  
+current_context = ""  
+clean_text = ""  
   
-class QuestionRequest(BaseModel):  
-    key: str  
-
-import os  
+@app.post("/upload")  
+async def upload_pdf(file: UploadFile = File(...)):  
+    global clean_text  
+    if file.content_type != "application/pdf":  
+        raise HTTPException(status_code=400, detail="Invalid file type. Please upload a PDF file.")  
   
- 
+    raw_text = ""  
+    reader = PdfReader(file.file)  
+    for page in reader.pages:  
+        text = page.extract_text()  
+        if text:  
+            raw_text += text  
+  
+    clean_text = raw_text.replace("\n", " ")  
+    clean_text = ' '.join(clean_text.split())  
+  
+    return {"response": "PDF uploaded and processed successfully."}  
+  
 @app.post("/qa")  
-async def ask_question(request: QuestionRequest):  
-    global current_context  
-    global current_docsearch_instance  
+async def ask_question(request: dict):  
+    global clean_text  
   
-    query = request.key  
+    query = request.get("key")  
     print("***********")  
     print(query)  
     if not query:  
         raise HTTPException(status_code=400, detail="Query must not be empty")  
   
-    # Check if the user wants to switch to the PDF context  
-    if query.lower() == "pdf":  
-        current_context = clean_text
-        return {"response": "Switched to PDF context."}  
-
-    query = query + "Text: " + clean_text
-    response = chatAzureOpenAI([HumanMessage(content=query)])
-    print(response.content)  
+    prompt = query + " Text: " + clean_text  
   
-    return {"response": response.content}  
-
- 
+    response = client.chat.completions.create(  
+        model="gpt-35-turbo",  # Replace with your deployment name if different  
+        messages=[  
+            {"role": "system", "content": "You are a helpful assistant."},  
+            {"role": "user", "content": prompt}  
+        ]  
+    )  
+  
+    answer = response.choices[0].message.content.strip()  
+    print(answer)  
+  
+    return {"response": answer}  
+  
 if __name__ == "__main__":  
     uvicorn.run(app, host="127.0.0.1", port=5500)  
-
-
