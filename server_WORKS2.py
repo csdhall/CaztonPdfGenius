@@ -1,8 +1,9 @@
 from PyPDF2 import PdfReader
-from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain.embeddings.azure_openai import AzureOpenAIEmbeddings
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores import ElasticVectorSearch, Pinecone, Weaviate, FAISS
-from langchain.chat_models import ChatOpenAI
+from langchain.chat_models import AzureChatOpenAI
+from langchain.schema import HumanMessage
 import pickle
 from Utilities.video import get_youtube_transcript, parse_youtube_link
 from Utilities.vector import *
@@ -13,118 +14,98 @@ import tiktoken
 import os
 from dotenv import load_dotenv
 
-
+os.environ.clear()
 # Load environment variables from the .env file
 load_dotenv(".env", override=True)
+import os
+
+# # List of environment variables to delete
+# env_vars_to_delete = ["base_url"]
+# # env_vars_to_delete = ["base_url", "OPENAI_API_TYPE", "OPENAI_API_BASE", "OPENAI_API_VERSION"]
+
+# # Delete each environment variable
+# for var in env_vars_to_delete:
+#     if var in os.environ:
+#         del os.environ[var]
 
 # Access the OPENAI_API_KEY environment variable
-openai_api_key = os.environ.get("OPENAI_API_KEY")
-openai_api_type = os.environ.get("OPENAI_API_TYPE")
-openai_api_base = os.environ.get("OPENAI_API_BASE")
-openai_api_version = os.environ.get("OPENAI_API_VERSION")
+# openai_api_key = os.environ.get("OPENAI_API_KEY")
+# openai_api_type = os.environ.get("OPENAI_API_TYPE")
+# openai_api_base = os.environ.get("OPENAI_API_BASE")
+# openai_api_version = os.environ.get("OPENAI_API_VERSION")
 
 # print(f"openai_api_base: {openai_api_base}")
 # print(f"openai_api_version: {openai_api_version}")
 # print(f"openai_api_key: {openai_api_key}")
-# print(f"openai_api_type: {openai_api_type}")
-# print("********")
+# print(f"base_url: {os.environ.get('base_url')}")
+print("********")
+# exit()
+cazton_gpt4_model = os.getenv("CaztonGpt4_0125_Preview")
+openai_api_version = os.getenv("OPENAI_API_VERSION")
+chatAzureOpenAI = AzureChatOpenAI(
+        azure_deployment=cazton_gpt4_model,
+        openai_api_version=os.getenv("OPENAI_API_VERSION"),
+        azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
+        model=cazton_gpt4_model,
+        temperature=0,
+    )
 
+# message = HumanMessage(content="tell a joke")
+# response = chatAzureOpenAI([message])
+# print(f"response: {response}")
+# exit()
 
 # location of the pdf file/files. 
 file_name=CONSTANTS.FILE
 
 file_path = f'Docs/{file_name}.pdf'
 
-# reader = PdfReader(file_path)
+reader = PdfReader(file_path)
 
-# print(f"file_path: {file_path}")
-# print(f"reader: {reader}")
+print(f"file_path: {file_path}")
+print(f"reader: {reader}")
 
-# # read data from the file and put them into a variable called raw_text
-# raw_text = ''
-# for i, page in enumerate(reader.pages):
-#     text = page.extract_text()
-#     if text:
-#         raw_text += text
+# read data from the file and put them into a variable called raw_text
+raw_text = ''
+for i, page in enumerate(reader.pages):
+    text = page.extract_text()
+    if text:
+        raw_text += text
 
-# # raw_text
+# raw_text
 
-# raw_text[:100]
-# print(f"raw_text: {raw_text[:100]}")
+raw_text[:100]
+print(f"raw_text: {raw_text[:100]}")
+
+# Remove newline characters
+clean_text = raw_text.replace("\n", " ")
+
+# Remove multiple spaces
+clean_text = ' '.join(clean_text.split())
+
+print(clean_text)
 # We need to split the text that we read into smaller chunks so that during information retreival we don't hit the token size limits. 
 
-# text_splitter = CharacterTextSplitter(        
-#     separator = "\n",
-#     chunk_size = 1000,
-#     chunk_overlap  = 200,
-#     length_function = len,
-# )
-# texts = text_splitter.split_text(raw_text)
+strings_to_remove = ["<|endoftext|>", "endoftext"]
 
-# len(texts)
-# print(f"len(texts): {len(texts)}")
+for string in strings_to_remove:
+    clean_text = clean_text.replace(string, "")
 
-# texts = [item.replace("<|endoftext|>", "endoftext") for item in texts]
-# print(f"len(texts): {len(texts)}")
-
-# for i, text in enumerate(texts):
-#     result = "<|endoftext|>" in text
-#     if result == True:
-#         print(f"i: {result} <|endoftext|>")
-#         print(f"********")
-
-# for i, text in enumerate(texts):
-#     result = "endoftext" in text
-#     if result == True:
-#         print(f"i: {result} endoftext")
-#         print(f"********")
-
-# texts[0]
-# print(f"texts[0]: {texts[0]}")
-# texts[1]
-
-# Download embeddings from OpenAI
-embeddings_model = "Cazton-ada-2"
-tokenizer = tiktoken.get_encoding("cl100k_base")
-
-# NOTE: DO THIS FIRST. Uncomment and run.
-embeddings = OpenAIEmbeddings(deployment=embeddings_model,
-                              openai_api_base=openai_api_base,
-                              openai_api_version=openai_api_version,
-                              openai_api_key=openai_api_key,
-                              openai_api_type=openai_api_type,
-                              chunk_size=1)
-
-print(f"\n\n\ Embeddings: {embeddings} \n")
-
-
-import pickle  
-  
-file_path_pkl = get_file_path(file_name)
-embeddings = create_embeddings_if_not_exists(file_path_pkl, embeddings)
-
-# print("/n/n/ Embeddings saved to pickle file /n/n/n")
-# exit()
-import pickle  
-
-file = f'Data/{file_name}.pkl'
-with open(file, 'rb') as f:  
-    print(f"\n Reading.........{file}")
-    embeddings = pickle.load(f)  
-
-docsearch = FAISS.from_texts(texts, embeddings)
-
-current_context = None  # Possible values: None, "youtube", "pdf"  
-current_docsearch_instance = docsearch  # Set the initial docsearch instance to the PDF  
-
+print(f"\n\n clean_text : {clean_text}\n\n")
 
 from langchain.chains.question_answering import load_qa_chain
 from langchain.llms import OpenAI
 
-# gpt3_model = "CaztonDavinci3"
-gpt4_model = "CaztonGpt-4Turbo"
 
-chain = load_qa_chain(ChatOpenAI(engine=gpt4_model, temperature=0.3, max_tokens=3000), chain_type="stuff")
+chatAzureOpenAI = AzureChatOpenAI(
+        azure_deployment=cazton_gpt4_model,
+        openai_api_version=os.getenv("OPENAI_API_VERSION"),
+        azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
+        model=cazton_gpt4_model,
+        temperature=0,
+    )
+# chain = load_qa_chain(ChatOpenAI(engine=gpt4_model, temperature=0.3, max_tokens=3000), chain_type="stuff")
+
 # query = "who are the authors of the article?"
 # docs = docsearch.similarity_search(query)
 # chain.run(input_documents=docs, question=query)
@@ -183,25 +164,15 @@ from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware  
 import uvicorn  
 
-def search_documents(input_text, embeddings):  
-    text_splitter = CharacterTextSplitter(  
-        separator="\n",  
-        chunk_size=1000,  
-        chunk_overlap=200,  
-        length_function=len,  
-    )  
-    chunks = text_splitter.split_text(input_text)  
-    docsearch_instance = FAISS.from_texts(chunks, embeddings)  
-    return docsearch_instance  
   
 app = FastAPI()  
   
 # Add CORS middleware  
 origins = [  
     "http://localhost",  
-    "http://localhost:5000",  
+    "http://localhost:5501",  
     "http://127.0.0.1",  
-    "http://127.0.0.1:5000",  
+    "http://127.0.0.1:5501",  
 ]  
   
 app.add_middleware(  
@@ -212,9 +183,6 @@ app.add_middleware(
     allow_headers=["*"],  
 )  
   
-# ... (your existing code)  
-
-
 from pydantic import BaseModel  
   
 class QuestionRequest(BaseModel):  
@@ -222,11 +190,7 @@ class QuestionRequest(BaseModel):
 
 import os  
   
-
-
-
-
-  
+ 
 @app.post("/qa")  
 async def ask_question(request: QuestionRequest):  
     global current_context  
@@ -240,31 +204,19 @@ async def ask_question(request: QuestionRequest):
   
     # Check if the user wants to switch to the PDF context  
     if query.lower() == "pdf":  
-        current_context = "pdf"  
-        current_docsearch_instance = docsearch  
+        current_context = clean_text
         return {"response": "Switched to PDF context."}  
+
+    query = query + "Text: " + clean_text
+    response = chatAzureOpenAI([HumanMessage(content=query)])
+    print(response.content)  
   
-    # Check if the query contains a YouTube link  
-    youtube_url = parse_youtube_link(query)  
-    if youtube_url:  
-        transcript = get_transcript(query)  
-        query = "Summarize the video. Also share key highlights."  
-        current_context = "youtube"  
-  
-    if current_context == "youtube":  
-        docs = current_docsearch_instance.similarity_search(query)  
-    else:  
-        docs = docsearch.similarity_search(query)  
-  
-    response = chain.run(input_documents=docs, question=query)  
-    print(response)  
-  
-    return {"response": response}  
+    return {"response": response.content}  
 
  
 
 
 if __name__ == "__main__":  
-    uvicorn.run(app, host="0.0.0.0", port=8080)  
+    uvicorn.run(app, host="127.0.0.1", port=5500)  
 
 

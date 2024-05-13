@@ -5,7 +5,7 @@ from langchain.vectorstores import ElasticVectorSearch, Pinecone, Weaviate, FAIS
 from langchain.chat_models import ChatOpenAI
 import pickle
 from Utilities.video import get_youtube_transcript, parse_youtube_link
-from Utilities.vector import *
+from Utilities.vector import create_embeddings_if_not_exists, get_file_path
 import CONSTANTS
 import tiktoken
 # Get your API keys from openai, you will need to create an account. 

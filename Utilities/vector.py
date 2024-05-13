@@ -1,5 +1,5 @@
 import pickle 
-from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain.embeddings.azure_openai import AzureOpenAIEmbeddings
 import os
 
 def create_embeddings(file_name):

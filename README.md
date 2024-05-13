@@ -4,13 +4,14 @@ Here's a markdown version of the steps to run the FastAPI application:
 
 ## NOTE: Use this if you're already set up
 Run this on termincal. This will run HTML with NO CORS. DO NOT use in production
-``` cd UI/run_html.py```
+``` cd UI
+    python run_html.py```
 
 Then run this
 ## Server.py has BOTH youtube and PDF working. 
 
 ``` cd Server ```
-``` python server.py ```
+``` python server_WORKS2.py ```
 
 or
 ``` python pdf_azure_openai_embeddings.py ```

@@ -1,5 +1,5 @@
-from PyPDF2 import PdfReader
-from langchain.embeddings.openai import OpenAIEmbeddings
+
+from langchain_openai import AzureOpenAIEmbeddings
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores import ElasticVectorSearch, Pinecone, Weaviate, FAISS
 import tiktoken
@@ -19,6 +19,8 @@ openai_api_base = os.environ.get("OPENAI_API_BASE")
 openai_api_version = os.environ.get("OPENAI_API_VERSION")
 
 print(openai_api_key)
+from PyPDF2 import PdfReader
+
 print(openai_api_type)
 print(openai_api_base)
 print(openai_api_version)
@@ -59,12 +61,14 @@ texts[1]
 embeddings_model = "CaztonEmbedAda2"
 tokenizer = tiktoken.get_encoding("cl100k_base")
 
-embeddings = OpenAIEmbeddings(deployment=embeddings_model,
-                              openai_api_base=openai_api_base,
-                              openai_api_version=openai_api_version,
-                              openai_api_key=openai_api_key,
-                              openai_api_type=openai_api_type,
-                              chunk_size=1)
+# embeddings = AzureOpenAIEmbeddings(deployment=embeddings_model,
+#                               openai_api_base=openai_api_base,
+#                               openai_api_version=openai_api_version,
+#                               openai_api_key=openai_api_key,
+#                               openai_api_type=openai_api_type,
+#                               chunk_size=1)
+
+embeddings = AzureOpenAIEmbeddings(azure_deployment="Cazton-ada-2", chunk_size=16)
 
 docsearch = FAISS.from_texts(texts, embeddings)
 
@@ -149,5 +153,5 @@ async def ask_question(request: QuestionRequest):
  
 
 
-if __name__ == "__main__":  
-    uvicorn.run(app, host="0.0.0.0", port=8080)  
+# if __name__ == "__main__":  
+#     uvicorn.run(app, host="0.0.0.0", port=8080)  

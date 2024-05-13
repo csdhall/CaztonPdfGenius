@@ -2,19 +2,33 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "FastAPI",
-            "type": "python",
+            "name": "Python: Current File",
+            "type": "debugpy",
             "request": "launch",
-            "module": "uvicorn",
-            "args": [
-                "cazton_pdf_ai_azure:app",
-                "--host",
-                "localhost",
-                "--port",
-                "8080",
-                "--reload"
-            ],
+            "program": "${file}",
             "console": "integratedTerminal"
         }
     ]
 }
+
+// {
+//     "version": "0.2.0",
+//     "configurations": [
+//         {
+//             "name": "FastAPI",
+//             "type": "debugpy",
+//             "request": "launch",
+//             "module": "uvicorn",
+//             "args": [
+//                 "server_WORKS2:app",
+//                 "--host",
+//                 "localhost",
+//                 "--port",
+//                 "8080",
+//                 "--reload"
+//             ],
+//             "console": "integratedTerminal"
+//         }
+//     ]
+// }
+
