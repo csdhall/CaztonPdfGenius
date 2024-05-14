@@ -64,11 +64,17 @@ async def ask_question(request: dict):
   
     query = request.get("key")  
     print("***********")  
+    print(f"Query: {query}")
+    print("***********")  
     print(query)  
     if not query:  
         raise HTTPException(status_code=400, detail="Query must not be empty")  
   
     prompt = query + " Text: " + clean_text  
+
+    print("***********")  
+    print(f"prompt: {prompt}")
+    print("***********")  
   
     response = client.chat.completions.create(  
         messages=[  
