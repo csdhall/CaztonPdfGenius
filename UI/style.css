@@ -11,11 +11,11 @@ body {
     background-color: #f5f5f5;  
   }  
     
-  p:nth-child(even) {  
-    color: #007aff;  
+  p:nth-child(even) { 
+    color: #444444;  
   }  
   p:nth-child(odd) {  
-    color: #444444;  
+    color: #007aff;  
   }  
     
   .chat-container {  

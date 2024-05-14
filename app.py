@@ -1,3 +1,5 @@
+# app.py
+
 from fastapi import FastAPI, HTTPException, File, UploadFile  
 from fastapi.middleware.cors import CORSMiddleware  
 import uvicorn  
@@ -54,7 +56,7 @@ async def upload_pdf(file: UploadFile = File(...)):
     clean_text = raw_text.replace("\n", " ")  
     clean_text = ' '.join(clean_text.split())  
   
-    return {"response": "PDF uploaded and processed successfully."}  
+    return {"response": f"{file.filename} uploaded successfully"}  
   
 @app.post("/qa")  
 async def ask_question(request: dict):  
@@ -69,11 +71,11 @@ async def ask_question(request: dict):
     prompt = query + " Text: " + clean_text  
   
     response = client.chat.completions.create(  
-        model="gpt-35-turbo",  # Replace with your deployment name if different  
         messages=[  
             {"role": "system", "content": "You are a helpful assistant."},  
             {"role": "user", "content": prompt}  
-        ]  
+        ],
+        model=os.getenv("Gpt4Turbo-2023-04-09"),  
     )  
   
     answer = response.choices[0].message.content.strip()  
