@@ -74,6 +74,8 @@
             if (question) {  
                 inputBox.value = "";  
                 appendMessage("You", question);  
+                appendMessage("Cazton", "Loading...");  
+  
                 fetch("http://127.0.0.1:5500/qa", {  
                     method: "POST",  
                     headers: {  
@@ -86,6 +88,8 @@
                     .then((response) => response.json())  
                     .then((data) => {  
                         const answer = data.response;  
+                        // Remove the loading message  
+                        chatbox.lastChild.remove();  
                         appendMessage("Cazton", answer);  
                     })  
                     .catch((error) => {  
