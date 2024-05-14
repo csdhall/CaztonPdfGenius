@@ -1,12 +1,11 @@
-fastapi  
-uvicorn  
+fastapi 
+Flask
+Flask-Cors 
 PyPDF2  
 openai  
-python-dotenv  
-Flask
-Flask-Cors
+python-dotenv 
 requests
-
+uvicorn
 # aiohttp
 # aiosignal
 # anyio

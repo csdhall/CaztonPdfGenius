@@ -11,6 +11,7 @@ from urllib.parse import urlparse
   
 # Load environment variables from the .env file  
 load_dotenv(".env", override=True)  
+MAX_PAGES = 150
   
 # Initialize AzureOpenAI client  
 client = AzureOpenAI(  
@@ -40,6 +41,8 @@ app.add_middleware(
 current_context = ""  
 clean_text = ""  
   
+
+  
 @app.post("/upload")  
 async def upload_pdf(file: UploadFile = File(...)):  
     global clean_text  
@@ -48,7 +51,7 @@ async def upload_pdf(file: UploadFile = File(...)):
   
     raw_text = ""  
     reader = PdfReader(file.file)  
-    for page in reader.pages:  
+    for page in reader.pages[:MAX_PAGES]:  
         text = page.extract_text()  
         if text:  
             raw_text += text  
@@ -78,7 +81,7 @@ async def ask_question(request: dict):
         raw_text = ""  
         pdf_file = io.BytesIO(response.content)  
         reader = PdfReader(pdf_file)  
-        for page in reader.pages:  
+        for page in reader.pages[:MAX_PAGES]:  
             text = page.extract_text()  
             if text:  
                 raw_text += text  
@@ -102,6 +105,8 @@ async def ask_question(request: dict):
     print(answer)  
   
     return {"response": answer}  
+  
+
   
 if __name__ == "__main__":  
     uvicorn.run(app, host="127.0.0.1", port=5500)  
