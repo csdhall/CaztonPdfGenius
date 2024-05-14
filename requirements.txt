@@ -5,6 +5,7 @@ openai
 python-dotenv  
 Flask
 Flask-Cors
+requests
 
 # aiohttp
 # aiosignal

@@ -10,7 +10,7 @@ Run this on termincal. This will run HTML with NO CORS. DO NOT use in production
 Then run this
 ## Server.py has BOTH youtube and PDF working. 
 
-``` cd Server ```
+
 ``` python app.py ```
 
 or
